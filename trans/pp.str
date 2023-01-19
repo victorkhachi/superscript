@@ -1,0 +1,52 @@
+module pp
+
+imports
+  libstratego-lib
+
+imports
+
+  libstratego-gpp
+  libspoofax/sdf/pp
+  libspoofax/editor/refactoring/-
+  pp/superscript-parenthesize
+  pp/superscript-pp
+
+rules
+
+  editor-format:
+    (node, _, ast, path, project-path) -> (filename, result)
+    with
+      ext      := <get-extension> path
+    ; filename := <guarantee-extension(|$[pp.[ext]])> path
+    ; result   := <pp-debug> node
+
+rules
+  
+  pp-superscript-string =
+    parenthesize-superscript
+    ; prettyprint-superscript-start-symbols
+    ; !V([], <id>)
+    ; box2text-string(|120)
+      
+  pp-partial-superscript-string =
+    parenthesize-superscript
+    ; prettyprint-superscript
+    ; !V([], <id>)
+    ; box2text-string(|120)
+    
+  pp-partial-superscript-string(|sort) =
+    parenthesize-superscript
+    ; prettyprint-superscript(|sort)
+    ; !V([], <id>)
+    ; box2text-string(|120)  
+      
+  pp-debug :
+    ast -> result
+    with
+       result := <pp-superscript-string> ast
+    <+ <bottomup(try(not(is-string); not(is-list); not(pp-superscript-string); debug(!"cannot pp ")))> ast
+    ;  result := ""
+
+rules
+  
+  construct-textual-change = construct-textual-change(pp-partial-superscript-string, parenthesize, override-reconstruction, resugar)

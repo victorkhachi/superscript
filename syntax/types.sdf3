@@ -1,0 +1,34 @@
+module types
+
+imports 
+
+Common
+
+context-free sorts
+
+Type Expr Ref
+
+context-free syntax
+
+Ref.Ref = <type <ID> <Type>>
+
+Type.Num= <number>
+Type.Str= <str>
+Type.Bool=<bool>
+
+//Typed Obj
+
+Type.ObjectType=<
+{<Ref> ':' <Expr> ",/n"}*
+>
+
+Expr.Expr= <<Str>>
+//Type Array
+Type.Array= <[<Type>]>
+
+
+lexical syntax
+
+ID='number' {reject}
+ID = 'bool' {reject}
+ID= 'str' {reject}
